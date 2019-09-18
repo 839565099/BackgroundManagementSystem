@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zyq.mapper.RoleMapper">
+    <select id="findAll"  resultType="role">
+        select * from SYS_ROLE
+    </select>
+    <insert id="save" parameterType="role">
+        insert into SYS_ROLE values (ROLE_SEQ.nextval,#{roleName},#{roleDesc})
+    </insert>
+
+
+    <resultMap id="rp" type="role">
+        <id property="id" column="id"></id>
+        <result property="roleName" column="roleName"></result>
+        <result property="roleDesc" column="roleDesc"></result>
+        <collection property="permissionList" ofType="Permission" fetchType="lazy" column="ID" select="com.zyq.mapper.PermissionMapper.findById"></collection>
+    </resultMap>
+    <select id="findById"  resultMap="rp" parameterType="int">
+        select * from SYS_USER_ROLE SUR ,SYS_ROLE SR where SUR.ROLEID=SR.ID and SUR.USERID=#{id}
+    </select>
+
+
+    <resultMap id="rs" type="role">
+        <id property="id" column="id"></id>
+        <result property="roleName" column="roleName"></result>
+        <result property="roleDesc" column="roleDesc"></result>
+        <collection property="permissionList" column="id" ofType="Permission" fetchType="lazy" select="com.zyq.mapper.PermissionMapper.findById"></collection>
+    </resultMap>
+    <select id="findByIdUI" parameterType="int" resultMap="rs">
+        select * from SYS_ROLE where ID=#{roleId}
+    </select>
+
+    <delete id="delAllPermission" parameterType="int">
+        delete from SYS_ROLE_PERMISSION where ROLEID=#{id}
+    </delete>
+    <insert id="savePermission" parameterType="int" >
+        insert into SYS_ROLE_PERMISSION  values (#{param2},#{param1})
+    </insert>
+
+</mapper>

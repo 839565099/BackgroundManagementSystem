@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zyq.mapper.OrdersMapper">
+
+    <resultMap id="all" type="orders">
+        <id property="id" column="id"></id>
+        <result property="orderNum" column="orderNum"></result>
+        <result property="orderTime" column="orderTime"></result>
+        <result property="peopleCount" column="peopleCount"></result>
+        <result property="orderDesc" column="orderDesc"></result>
+        <result property="payType" column="payType"></result>
+        <result property="orderStatus" column="orderStatus"></result>
+        <association property="product" javaType="product" fetchType="lazy" column="productId"
+                     select="com.zyq.mapper.ProductMapper.selectOne"></association>
+    </resultMap>
+    <select id="findAll" resultMap="all">
+        select * from orders
+    </select>
+
+    <insert id="save" parameterType="orders">
+        <!--<selectKey order="BEFORE" resultType="Long" keyProperty="id" keyColumn="id">-->
+            <!--select ORDER_SEQ.nextval from dual-->
+        <!--</selectKey>-->
+        insert into ORDERS values
+        (ORDER_SEQ.nextval,#{orderNum},#{orderTime},#{peopleCount},#{orderDesc},#{payType},#{orderStatus},#{productId})
+    </insert>
+
+    <delete id="delOne" parameterType="Integer" >
+        delete from ORDERS where id=#{id}
+    </delete>
+</mapper>

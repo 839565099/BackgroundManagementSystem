@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <!--引入外部数据-->
+    <context:property-placeholder location="classpath:jdbc.properties"></context:property-placeholder>
+
+    <!--数据源-->
+    <bean id="springDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${jdbc.oracle.driver}"></property>
+        <property name="url" value="${jdbc.oracle.url}"></property>
+        <property name="username" value="${jdbc.oracle.username}"></property>
+        <property name="password" value="${jdbc.oracle.password}"></property>
+    </bean>
+
+    <!--Spring整合Mybatis-->
+    <!--创建 SqlSessionFactory-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="springDataSource"></property>
+        <!--对应mybatis别名配置-->
+        <property name="typeAliasesPackage" value="com.zyq.pojo"></property>
+        <!--对应mybatis引入mapper.xml-->
+        <property name="mapperLocations" value="classpath:mapper/*Mapper.xml"></property>
+        <!--配置分页插件-->
+        <property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageInterceptor">
+                    <!--告诉分页插件用的是什么数据库-->
+                    <property name="properties">
+                        <props>
+                            <prop key="helperDialect">oracle</prop>
+                        </props>
+                    </property>
+                </bean>
+            </array>
+        </property>
+    </bean>
+
+    <!--负责 SqlSession 的创建和关闭 扫描Mapper包下的所有映射映射文件(接口)-->
+    <bean id="mapperFactory" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.zyq.mapper"></property>
+    </bean>
+</beans>

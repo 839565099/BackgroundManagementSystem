@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zyq.mapper.ProductMapper">
+    <select id="findAll" resultType="product">
+         select * from product
+    </select>
+
+    <insert id="save">
+        <selectKey order="BEFORE" resultType="Integer" keyProperty="id" keyColumn="id">
+            select PRODUCT_SEQ.nextval from dual
+        </selectKey>
+        insert into PRODUCT values
+        (#{id},#{productNum},#{productName},#{cityName},#{departureTime},#{productPrice},#{productDesc},#{productStatus})
+    </insert>
+
+    <select id="selectOne" parameterType="Integer" resultType="product">
+        select p.*,to_char(DEPARTURETIME,'yyyy-MM-dd') departuretimeStr from PRODUCT p where id=#{id}
+    </select>
+
+    <update id="updateAll" parameterType="product">
+        update PRODUCT set PRODUCTNUM=#{productNum},PRODUCTNAME=#{productName},CITYNAME=#{cityName},DEPARTURETIME=#{departureTime},PRODUCTPRICE=#{productPrice},PRODUCTSTATUS=#{productStatus} where ID=#{id}
+    </update>
+
+    <delete id="delOne" parameterType="Integer">
+        delete from PRODUCT where ID=#{id}
+    </delete>
+
+    <delete id="delMany" parameterType="Integer">
+        delete from PRODUCT where ID=#{id}
+    </delete>
+    <!--手动分页  查询总的条数-->
+    <select id="findByTotalCount" resultType="Long">
+        select count(1) from PRODUCT
+    </select>
+    <!--手动分页 动态查询数据-->
+    <select id="findBypage" parameterType="Integer" resultType="product">
+       select t.* from (select p.*,rownum r from PRODUCT p ) t where t.r between #{param1} and #{param2}
+    </select>
+</mapper>
