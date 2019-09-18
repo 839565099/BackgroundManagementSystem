@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <import resource="classpath*:spring/MybatisConfig.xml"></import>
+    <!--spring注解扫描-->
+    <context:component-scan base-package="com.zyq">
+        <!--springmvc的注解不用spring扫描-->
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"></context:exclude-filter>
+    </context:component-scan>
+
+    <!--创建事务管理器对象-->
+    <bean id="TxManager" class=" org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="springDataSource"></property>
+    </bean>
+
+    <!--事务管理器增强(过滤方法是否需要拦截-查询方法不需要开启事务)-->
+    <tx:advice id="TxAdvice" transaction-manager="TxManager">
+        <!--方法的过滤-->
+        <tx:attributes>
+            <!--指定需要拦截的方法
+                isolation:隔离级别
+                propagation：传播的行为
+                read-only：是否为只读的事务 增删改->非只读事务 false
+                                查询->只读事务 true
+                timeout：-1   永不超时  也可以随便设置 单位为秒
+
+                通配符 *：只需要方法名以这些开头的就拦截
+            -->
+            <tx:method name="find*" isolation="DEFAULT" propagation="SUPPORTS" read-only="true"
+                       timeout="-1"></tx:method>
+            <tx:method name="get*" isolation="DEFAULT" propagation="SUPPORTS" read-only="true" timeout="-1"></tx:method>
+            <tx:method name="select*" isolation="DEFAULT" propagation="SUPPORTS" read-only="true"
+                       timeout="-1"></tx:method>
+            <!--其他-->
+            <tx:method name="*"></tx:method>
+        </tx:attributes>
+    </tx:advice>
+
+    <!--配置切面=切入点+通知(增强)-->
+    <aop:config>
+        <!--配置切面-->
+        <aop:advisor advice-ref="TxAdvice" pointcut="execution(* com.zyq.serviceimp.*.*(..))"></aop:advisor>
+    </aop:config>
+
+</beans>
