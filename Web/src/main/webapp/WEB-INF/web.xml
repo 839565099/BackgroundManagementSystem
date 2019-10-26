@@ -50,7 +50,7 @@
     </filter-mapping>
 
 
-    <!--&lt;!&ndash;配置委派代理过滤器： filter-name必须是：springSecurityFilterChain  &ndash;&gt;-->
+    <!--配置委派代理过滤器： filter-name必须是：springSecurityFilterChain  -->
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
