@@ -17,7 +17,7 @@
     <!--定义Spring版本号-->
     <properties>
         <spring.version>4.3.7.RELEASE</spring.version>
-        <spring.security.version>5.0.1.RELEASE</spring.security.version>
+        <spring.security.version>5.2.10.RELEASE</spring.security.version>
     </properties>
 
     <dependencies>
